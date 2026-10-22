@@ -30,7 +30,7 @@
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>PRE-ORDER DROP • ARRIVING OCTOBER 10TH • <strong class="font-semibold">A3  | A4 </strong></span>
+                <span>Order DROP • ARRIVING NOVEMBER 16TH • <strong class="font-semibold">A3  | A4 </strong></span>
             </div>
         </div>
     </div>
@@ -357,8 +357,6 @@
                     Contact Us
                 </button>
                 <span>•</span>
-                <span>Pre-order batch arriving Oct 10</span>
-                <span>•</span>
                 <button 
                     onclick="handleAdminTrigger()" 
                     id="footerAdminBtn"
@@ -441,19 +439,22 @@
         </div>
     </div>
 
-    <!-- Bag Drawer (WhatsApp Order & Payment Request) -->
+    <!-- Bag Drawer (Email Order & Payment Request) -->
+    <<!-- Bag Drawer (Email Order & Payment Request) -->
     <div id="bagDrawerBackdrop" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden" onclick="toggleBagDrawer(false)">
-        <div 
+        <form 
+            id="preOrderForm"
+            onsubmit="sendEmailPreOrder(event)"
             class="fixed inset-y-0 right-0 max-w-md w-full bg-white shadow-2xl border-l border-[#EAEAEA] flex flex-col justify-between"
             onclick="event.stopPropagation()"
         >
             <!-- Bag Header -->
             <div class="px-5 py-4 border-b border-[#EAEAEA] flex items-center justify-between">
                 <div>
-                    <h2 class="font-display font-bold text-base text-[#111111]">Pre-Order Checkout</h2>
-                    <p class="text-[11px] text-zinc-500">Select posters • Enter details • Pay via WhatsApp QR</p>
+                    <h2 class="font-display font-bold text-base text-[#111111]">Order Checkout</h2>
+                    <p class="text-[11px] text-zinc-500">Select posters • Enter details • Pay via Email QR</p>
                 </div>
-                <button onclick="toggleBagDrawer(false)" class="p-1.5 rounded-lg text-zinc-400 hover:text-[#111111] hover:bg-zinc-100 transition cursor-pointer">
+                <button type="button" onclick="toggleBagDrawer(false)" class="p-1.5 rounded-lg text-zinc-400 hover:text-[#111111] hover:bg-zinc-100 transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -464,7 +465,7 @@
                 <div>
                     <div class="flex items-center justify-between mb-2.5">
                         <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">1. Selected Posters</span>
-                        <button onclick="clearBag()" class="text-xs text-zinc-400 hover:text-rose-600 transition cursor-pointer">Clear All</button>
+                        <button type="button" onclick="clearBag()" class="text-xs text-zinc-400 hover:text-rose-600 transition cursor-pointer">Clear All</button>
                     </div>
                     <div id="bagItemsContainer" class="space-y-2.5">
                         <!-- Dynamically populated -->
@@ -477,34 +478,40 @@
                     <input 
                         type="text" 
                         id="custName" 
+                        name="name"
                         placeholder="Full Name *" 
+                        required
                         class="w-full bg-white border border-[#EAEAEA] focus:border-[#111111] rounded-xl px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none"
                     >
                     <input 
-                        type="tel" 
+                        type="text" 
                         id="custPhone" 
-                        placeholder="Phone / WhatsApp Number *" 
+                        name="contact_info"
+                        placeholder="Phone Number or Email ID *" 
+                        required
                         class="w-full bg-white border border-[#EAEAEA] focus:border-[#111111] rounded-xl px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none"
                     >
                     <textarea 
                         id="custAddress" 
+                        name="address"
                         rows="2" 
                         placeholder="Delivery Address / Room / Hostel *" 
+                        required
                         class="w-full bg-white border border-[#EAEAEA] focus:border-[#111111] rounded-xl px-3.5 py-2 text-xs text-[#111111] focus:outline-none"
                     ></textarea>
                     <div id="bagError" class="hidden text-xs text-rose-600 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2">
-                        Please enter your name, phone number, and delivery address.
+                        Please enter your name, phone/email, and delivery address.
                     </div>
                 </div>
 
                 <!-- Step 3: How Payment Works Notice -->
                 <div class="bg-[#FAFAFA] border border-[#EAEAEA] rounded-2xl p-4 space-y-1.5">
                     <div class="flex items-center gap-1.5 text-xs font-bold text-[#111111]">
-                        <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600"></i>
-                        <span>3. Payment on WhatsApp</span>
+                        <i data-lucide="mail" class="w-4 h-4 text-white"></i>
+                        <span>3. Direct Order Confirmation</span>
                     </div>
                     <p class="text-[11px] text-zinc-600 leading-relaxed">
-                        Click the button below to send your selected poster IDs and delivery info to us on WhatsApp. We will send you the payment QR code directly in the chat to confirm your order!
+                        Click the button below to submit your Order directly to us. We will contact you with the payment QR code to confirm your order!
                     </p>
                 </div>
             </div>
@@ -516,13 +523,15 @@
                     <span id="bagFooterTotal" class="font-display font-extrabold text-lg text-[#111111] font-mono">₹0</span>
                 </div>
                 <button 
-                    onclick="sendWhatsAppPreOrder()" 
-                    class="w-full py-3 px-4 rounded-xl bg-[#111111] hover:bg-zinc-800 text-white font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer shadow-sm"
+                    type="submit"
+                    id="submitOrderBtn"
+                    class="w-full py-3 px-4 rounded-xl bg-[#111111] hover:bg-zinc-800 disabled:opacity-50 text-white font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer shadow-sm"
                 >
                     <i data-lucide="send" class="w-4 h-4"></i>
-                    <span>Send Order & Get Payment QR</span>
+                    <span id="submitOrderBtnText">Send Order Request</span>
                 </button>
                 <button 
+                    type="button"
                     onclick="copyOrderText()" 
                     class="w-full py-2 px-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
                 >
@@ -530,7 +539,7 @@
                     <span>Copy Order Summary</span>
                 </button>
             </div>
-        </div>
+        </form>
     </div>
 
     <!-- Contact Us Modal -->
@@ -553,7 +562,7 @@
                         <i data-lucide="phone" class="w-4 h-4"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Phone / WhatsApp</p>
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Phone / Mail</p>
                         <a id="contactPhoneLink" href="tel:+917209939682" class="font-mono font-bold text-[#111111] hover:underline block truncate">
                             +91 72099 39682
                         </a>
@@ -567,8 +576,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Email Address</p>
-                        <a id="contactEmailLink" href="mailto:myselfjyotips@gmail.com" class="font-mono font-bold text-[#111111] hover:underline block truncate">
-                            myselfjyotips@gmail.com
+                        <a id="contactEmailLink" class="font-mono font-bold text-[#111111] hover:underline block truncate cursor-pointer" title="Click to copy email">                            wallewoodposters@gmail.com
                         </a>
                     </div>
                 </div>
@@ -589,6 +597,6 @@
         <span id="toastText">Added to bag</span>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 </html>

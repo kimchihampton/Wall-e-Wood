@@ -29,3 +29,63 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+/*----------------------------------------------------------------------*/
+/* Smooth transitions */
+body, header, footer, section, div, button, input, textarea, select, span, p, h1, h2, h3, h4, a {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.2s ease;
+}
+
+/* Dark Mode Class Overrides */
+html.dark body,
+html.dark .bg-\[\#FAFAFA\] {
+    background-color: #09090b !important;
+    color: #f4f4f5 !important;
+}
+
+html.dark .bg-white {
+    background-color: #18181b !important;
+}
+
+html.dark .bg-white\/95,
+html.dark .bg-white\/90 {
+    background-color: rgba(24, 24, 27, 0.92) !important;
+}
+
+html.dark .bg-zinc-50,
+html.dark .bg-zinc-100,
+html.dark .bg-zinc-100\/90 {
+    background-color: #27272a !important;
+}
+
+html.dark .text-\[\#111111\] {
+    color: #f4f4f5 !important;
+}
+
+html.dark .text-zinc-600,
+html.dark .text-zinc-500 {
+    color: #a1a1aa !important;
+}
+
+html.dark .border-\[\#EAEAEA\] {
+    border-color: #27272a !important;
+}
+
+/* Invert solid black buttons to crisp white in dark mode */
+html.dark button.bg-\[\#111111\],
+html.dark .cat-pill.bg-\[\#111111\],
+html.dark .inline-flex.bg-\[\#111111\] {
+    background-color: #f4f4f5 !important;
+    color: #111111 !important;
+}
+
+/* Keep poster images and badges crisp */
+html.dark .poster-aspect {
+    background-color: #27272a !important;
+}
+
+html.dark .bg-amber-400,
+html.dark .bg-amber-400.text-\[\#111111\] {
+    color: #111111 !important;
+}

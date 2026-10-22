@@ -4,8 +4,8 @@ const STORE_CONFIG = {
     priceA3: 100,
     priceA4: 50,
     whatsappNumber: "917209939682",
-    contactPhoneDisplay: "+91 72099 39682",
-    contactEmail: "myselfjyotips@gmail.com"
+    contactPhoneDisplay: "+91 72099 39682, +91 99335 23485",
+    contactEmail: "wallewoodposters@gmail.com"
 };
 
 const DEFAULT_POSTERS = [
@@ -154,7 +154,7 @@ const DEFAULT_POSTERS = [
         "image": "images/A4/A4%20(30).webp"
     },
     {
-        "id": "`130",
+        "id": "130",
         "title": "Erling Haaland and Jude Bellingham",
         "category": "Sports",
         "defaultSize": "A4",
@@ -718,7 +718,7 @@ const DEFAULT_POSTERS = [
         "image": "images/A3/One%20piece.webp"
     },
     {
-        "id": "16",
+        "id": "143",
         "title": "Parasite",
         "category": "Films",
         "defaultSize": "A3",
@@ -927,7 +927,7 @@ function refreshIcons() {
 }
 
 // --- STATE ---
-let posters = [...DEFAULT_POSTERS];
+let posters = safeLoadJSON('Wall-e-Wood_posters_v3', [...DEFAULT_POSTERS]);
 let bag = safeLoadJSON('Wall-e-Wood_bag', {});
 let isAdminLoggedIn = sessionStorage.getItem('Wall-e-Wood_admin') === 'true';
 let selectedSizes = {};
@@ -1009,10 +1009,14 @@ function syncStoreInfo() {
     }
     if (emailLink) {
         emailLink.textContent = STORE_CONFIG.contactEmail;
-        emailLink.href = `mailto:${STORE_CONFIG.contactEmail}`;
+        emailLink.removeAttribute('href'); // Removes the mailto: link
+        emailLink.style.cursor = 'pointer';
+        emailLink.onclick = (e) => {
+            e.preventDefault();
+            copyToClipboard(STORE_CONFIG.contactEmail, "Email address copied!");
+        };
     }
 }
-
 // --- ADMIN AUTHENTICATION (PIN LOCK) ---
 function handleAdminTrigger() {
     if (isAdminLoggedIn) {
@@ -1126,8 +1130,7 @@ function updateUploadDiscountPreview() {
     const finalA4 = Math.round(baseA4 * (1 - discount / 100));
 
     labelEl.textContent = `${discount}% OFF`;
-    previewEl.textContent = `Final: A3 ₹${finalA3} \vert{} A4 ₹${finalA4}`;
-}
+    previewEl.textContent = `Final: A3 ₹${finalA3} | A4 ₹${finalA4}`;}
 
 function updatePosterPriceInline(posterId, field, value) {
     if (!isAdminLoggedIn) return;
@@ -1637,8 +1640,7 @@ function updateBagUI() {
                     <div class="min-w-0">
                         <p class="text-xs font-bold text-[#111111] truncate">${item.title}</p>
                         <p class="text-[10px] font-mono text-zinc-400">ID: ${item.posterId}</p>
-                        <p class="text-[11px] text-zinc-500 font-mono">${item.size} • ₹${unitPrice} ×${item.qty} = <strong class="text-[#111111]">₹${unitPrice * item.qty}</strong></p>
-                    </div>
+<p class="text-[11px] text-zinc-500 font-mono">${item.size} • ₹${unitPrice} ×${item.qty} = <strong class="text-[#111111]">₹${unitPrice * item.qty}</strong></p>                    </div>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
                     <button onclick="updateBagQty('${item.posterId}', '${item.size}', -1)" class="w-6 h-6 rounded-md bg-white border border-[#EAEAEA] text-xs font-bold flex items-center justify-center cursor-pointer">-</button>
@@ -1681,8 +1683,7 @@ function openLightbox(posterId) {
     const isSoldOut = Boolean(poster.soldOut);
 
     document.getElementById('lightboxImg').src = poster.image;
-    document.getElementById('lightboxCategory').textContent = `${poster.category} • ID: ${poster.id}`;
-    document.getElementById('lightboxTitle').textContent = poster.title;
+document.getElementById('lightboxCategory').textContent = `${poster.category} • ID: ${poster.id}`;    document.getElementById('lightboxTitle').textContent = poster.title;
 
     const badge = document.getElementById('lightboxSoldOutBadge');
     const actionBtns = document.getElementById('lightboxActionBtns');
@@ -1727,7 +1728,7 @@ function closeLightbox() {
     modal.classList.remove('flex');
 }
 
-// --- WHATSAPP & CLIPBOARD ORDER SUMMARY (WITH POSTER IDs) ---
+// --- email-ID & CLIPBOARD ORDER SUMMARY (WITH POSTER IDs) ---
 function formatOrderSummary() {
     const { count, total, items } = getBagSummary();
     const name = document.getElementById('custName').value.trim();
@@ -1740,8 +1741,7 @@ function formatOrderSummary() {
         ...items.map((item, i) => {
             const posterObj = posters.find(p => String(p.id) === String(item.posterId)) || {};
             const unitPrice = getPriceForPoster(posterObj, item.size);
-            return `${i + 1}. [ID:${item.posterId}] ${item.title} (${item.size}) × ${item.qty} = ₹${unitPrice * item.qty}`;
-        }),
+return `${i + 1}. [ID:${item.posterId}] ${item.title} (${item.size}) × ${item.qty} = ₹${unitPrice * item.qty}`;        }),
         `------------------------------`,
         `*Total Payable:* ₹${total} (${count} posters)`,
         ``,
@@ -1755,12 +1755,15 @@ function formatOrderSummary() {
     return lines.join('\n');
 }
 
-function sendWhatsAppPreOrder() {
-    const { items } = getBagSummary();
+async function sendEmailPreOrder(event) {
+    if (event) event.preventDefault();
+
+    const { count, total, items } = getBagSummary();
     if (items.length === 0) {
         showToast("Add at least 1 poster first");
         return;
     }
+
     const name = document.getElementById('custName').value.trim();
     const phone = document.getElementById('custPhone').value.trim();
     const address = document.getElementById('custAddress').value.trim();
@@ -1772,9 +1775,47 @@ function sendWhatsAppPreOrder() {
     }
     errEl.classList.add('hidden');
 
-    const msg = formatOrderSummary();
-    const cleanWa = STORE_CONFIG.whatsappNumber.replace(/[^0-9]/g, '');
-    window.open(`https://wa.me/${cleanWa}?text=${encodeURIComponent(msg)}`, '_blank');
+    const form = document.getElementById('preOrderForm');
+    const submitBtn = document.getElementById('submitOrderBtn');
+    const submitBtnText = document.getElementById('submitOrderBtnText');
+    const originalText = submitBtnText ? submitBtnText.textContent : "Send Pre-Order Request";
+
+    if (submitBtnText) submitBtnText.textContent = "Sending...";
+    if (submitBtn) submitBtn.disabled = true;
+
+    // Build FormData for Web3Forms
+    const formData = new FormData();
+    formData.append("access_key", "0d66ca6b-a6f8-4e95-85b3-3fef706417ba");
+    formData.append("subject", `New Pre-Order from ${name} (₹${total})`);
+    formData.append("from_name", "Wall-e-Wood Store");
+    formData.append("Customer Name", name);
+    formData.append("Phone / Email", phone);
+    formData.append("Delivery Address", address);
+    formData.append("Total Payable", `₹${total} (${count} posters)`);
+    formData.append("Order Summary", formatOrderSummary());
+
+    try {
+        const response = await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            showToast("Success! Your pre-order has been sent.");
+            if (form) form.reset();
+            clearBag();
+            toggleBagDrawer(false);
+        } else {
+            showToast("Error: " + (data.message || "Failed to send order."));
+        }
+    } catch (error) {
+        showToast("Something went wrong. Please check your connection.");
+    } finally {
+        if (submitBtnText) submitBtnText.textContent = originalText;
+        if (submitBtn) submitBtn.disabled = false;
+    }
 }
 
 function copyToClipboard(text, toastMsg) {
@@ -1811,3 +1852,28 @@ function copyOrderText() {
     }
     copyToClipboard(formatOrderSummary(), "Order summary copied!");
 }
+// --- DARK MODE TOGGLE ---
+(function initDarkMode() {
+    if (localStorage.getItem('Wall-e-Wood_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+        const contactBtn = document.querySelector('button[onclick="toggleContactModal(true)"]');
+        if (!contactBtn) return;
+        const btn = document.createElement('button');
+        btn.className = "flex items-center justify-center w-8 h-8 rounded-xl bg-white hover:bg-zinc-50 text-[#111111] border border-[#EAEAEA] text-xs transition cursor-pointer shadow-sm";
+        btn.title = "Toggle Dark Mode";
+        const updateIcon = () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            btn.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" class="w-3.5 h-3.5"></i>`;
+            refreshIcons();
+        };
+        btn.onclick = () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('Wall-e-Wood_theme', isDark ? 'dark' : 'light');
+            updateIcon();
+        };
+        contactBtn.parentNode.insertBefore(btn, contactBtn);
+        updateIcon();
+    });
+})();
