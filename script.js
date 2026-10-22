@@ -910,6 +910,7 @@ const DEFAULT_POSTERS = [
         "image": "images/A3/Seven.webp"
     }
 ];
+
 // --- SAFE STORAGE & ICON HELPERS ---
 function safeLoadJSON(key, fallback) {
     try {
@@ -1017,6 +1018,7 @@ function syncStoreInfo() {
         };
     }
 }
+
 // --- ADMIN AUTHENTICATION (PIN LOCK) ---
 function handleAdminTrigger() {
     if (isAdminLoggedIn) {
@@ -1130,7 +1132,8 @@ function updateUploadDiscountPreview() {
     const finalA4 = Math.round(baseA4 * (1 - discount / 100));
 
     labelEl.textContent = `${discount}% OFF`;
-    previewEl.textContent = `Final: A3 ₹${finalA3} | A4 ₹${finalA4}`;}
+    previewEl.textContent = `Final: A3 ₹${finalA3} | A4 ₹${finalA4}`;
+}
 
 function updatePosterPriceInline(posterId, field, value) {
     if (!isAdminLoggedIn) return;
@@ -1256,7 +1259,7 @@ function renderBranchPosterList() {
                 <img src="${p.image}" alt="${p.title}" class="w-8 h-11 object-cover rounded bg-zinc-200 shrink-0">
                 <div class="min-w-0">
                     <p class="font-bold text-[#111111] truncate">${p.title}</p>
-                    <p class="text-[10px] font-mono text-zinc-400">ID: ${p.id} •${p.category}</p>
+                    <p class="text-[10px] font-mono text-zinc-400">ID: ${p.id} • ${p.category}</p>
                 </div>
             </div>
 
@@ -1413,25 +1416,19 @@ function renderCatalogue() {
     const grid = document.getElementById('posterGrid');
     const emptyState = document.getElementById('emptyState');
 
-    // Filter posters and sort by Priority (priority: true comes first on homepage)
-    // Filter posters and sort by Priority first, then by ID descending
     const filtered = posters
         .filter(p => {
             const avail = getAvailableSizes(p);
             const matchCat = activeCategory === 'All' || p.category === activeCategory;
             const matchSize = activeSizeFilter === 'All' || avail.includes(activeSizeFilter);
             const matchQuery = String(p.title).toLowerCase().includes(searchQuery.toLowerCase()) ||
-                               String(p.category).toLowerCase().includes(searchQuery.toLowerCase()) ||
-                               String(p.id).toLowerCase().includes(searchQuery.toLowerCase());
+                             String(p.category).toLowerCase().includes(searchQuery.toLowerCase()) ||
+                             String(p.id).toLowerCase().includes(searchQuery.toLowerCase());
             return matchCat && matchSize && matchQuery;
         })
         .sort((a, b) => {
-            // First, prioritize items marked as 'priority: true'
             const priorityDiff = Number(Boolean(b.priority)) - Number(Boolean(a.priority));
             if (priorityDiff !== 0) return priorityDiff;
-            
-            // Then, sort the remaining items by ID in descending order
-            // We use parseInt to ensure accurate numerical sorting (e.g., 100 comes before 99)
             return parseInt(b.id) - parseInt(a.id);
         });
 
@@ -1508,7 +1505,7 @@ function renderCatalogue() {
 
         return `
         <div class="group bg-white border border-[#EAEAEA] rounded-2xl p-2.5 flex flex-col transition-all duration-200 hover:border-zinc-300 hover:shadow-sm ${isSoldOut ? 'opacity-75' : ''}">
-            <!-- 1) 2:3 Vertical Poster Frame -->
+            <!-- 1) Vertical Poster Frame -->
             <div 
                 onclick="openLightbox('${poster.id}')"
                 class="poster-aspect w-full rounded-xl bg-zinc-100 overflow-hidden relative cursor-pointer"
@@ -1640,7 +1637,8 @@ function updateBagUI() {
                     <div class="min-w-0">
                         <p class="text-xs font-bold text-[#111111] truncate">${item.title}</p>
                         <p class="text-[10px] font-mono text-zinc-400">ID: ${item.posterId}</p>
-<p class="text-[11px] text-zinc-500 font-mono">${item.size} • ₹${unitPrice} ×${item.qty} = <strong class="text-[#111111]">₹${unitPrice * item.qty}</strong></p>                    </div>
+                        <p class="text-[11px] text-zinc-500 font-mono">${item.size} • ₹${unitPrice} × ${item.qty} = <strong class="text-[#111111]">₹${unitPrice * item.qty}</strong></p>
+                    </div>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
                     <button onclick="updateBagQty('${item.posterId}', '${item.size}', -1)" class="w-6 h-6 rounded-md bg-white border border-[#EAEAEA] text-xs font-bold flex items-center justify-center cursor-pointer">-</button>
@@ -1683,7 +1681,8 @@ function openLightbox(posterId) {
     const isSoldOut = Boolean(poster.soldOut);
 
     document.getElementById('lightboxImg').src = poster.image;
-document.getElementById('lightboxCategory').textContent = `${poster.category} • ID: ${poster.id}`;    document.getElementById('lightboxTitle').textContent = poster.title;
+    document.getElementById('lightboxCategory').textContent = `${poster.category} • ID: ${poster.id}`;
+    document.getElementById('lightboxTitle').textContent = poster.title;
 
     const badge = document.getElementById('lightboxSoldOutBadge');
     const actionBtns = document.getElementById('lightboxActionBtns');
@@ -1728,7 +1727,7 @@ function closeLightbox() {
     modal.classList.remove('flex');
 }
 
-// --- email-ID & CLIPBOARD ORDER SUMMARY (WITH POSTER IDs) ---
+// --- ORDER SUMMARY FORMATTING ---
 function formatOrderSummary() {
     const { count, total, items } = getBagSummary();
     const name = document.getElementById('custName').value.trim();
@@ -1741,13 +1740,14 @@ function formatOrderSummary() {
         ...items.map((item, i) => {
             const posterObj = posters.find(p => String(p.id) === String(item.posterId)) || {};
             const unitPrice = getPriceForPoster(posterObj, item.size);
-return `${i + 1}. [ID:${item.posterId}] ${item.title} (${item.size}) × ${item.qty} = ₹${unitPrice * item.qty}`;        }),
+            return `${i + 1}. [ID:${item.posterId}] ${item.title} (${item.size}) × ${item.qty} = ₹${unitPrice * item.qty}`;
+        }),
         `------------------------------`,
         `*Total Payable:* ₹${total} (${count} posters)`,
         ``,
         `*Customer Details:*`,
         `• Name: ${name}`,
-        `• Phone: ${phone}`,
+        `• Phone/Email: ${phone}`,
         `• Address: ${address}`,
         ``,
         `Please send me the payment QR code so I can complete my payment!`
@@ -1755,6 +1755,7 @@ return `${i + 1}. [ID:${item.posterId}] ${item.title} (${item.size}) × ${item.q
     return lines.join('\n');
 }
 
+// --- WHATSAPP ORDER SUBMISSION ---
 async function sendEmailPreOrder(event) {
     if (event) event.preventDefault();
 
@@ -1775,47 +1776,17 @@ async function sendEmailPreOrder(event) {
     }
     errEl.classList.add('hidden');
 
+    const orderText = formatOrderSummary();
+    const whatsappNum = STORE_CONFIG.whatsappNumber || "917209939682";
+    const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(orderText)}`;
+
+    window.open(whatsappUrl, '_blank');
+
+    showToast("Redirecting to WhatsApp...");
     const form = document.getElementById('preOrderForm');
-    const submitBtn = document.getElementById('submitOrderBtn');
-    const submitBtnText = document.getElementById('submitOrderBtnText');
-    const originalText = submitBtnText ? submitBtnText.textContent : "Send Pre-Order Request";
-
-    if (submitBtnText) submitBtnText.textContent = "Sending...";
-    if (submitBtn) submitBtn.disabled = true;
-
-    // Build FormData for Web3Forms
-    const formData = new FormData();
-    formData.append("access_key", "0d66ca6b-a6f8-4e95-85b3-3fef706417ba");
-    formData.append("subject", `New Pre-Order from ${name} (₹${total})`);
-    formData.append("from_name", "Wall-e-Wood Store");
-    formData.append("Customer Name", name);
-    formData.append("Phone / Email", phone);
-    formData.append("Delivery Address", address);
-    formData.append("Total Payable", `₹${total} (${count} posters)`);
-    formData.append("Order Summary", formatOrderSummary());
-
-    try {
-        const response = await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            body: formData
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            showToast("Success! Your pre-order has been sent.");
-            if (form) form.reset();
-            clearBag();
-            toggleBagDrawer(false);
-        } else {
-            showToast("Error: " + (data.message || "Failed to send order."));
-        }
-    } catch (error) {
-        showToast("Something went wrong. Please check your connection.");
-    } finally {
-        if (submitBtnText) submitBtnText.textContent = originalText;
-        if (submitBtn) submitBtn.disabled = false;
-    }
+    if (form) form.reset();
+    clearBag();
+    toggleBagDrawer(false);
 }
 
 function copyToClipboard(text, toastMsg) {
@@ -1852,6 +1823,7 @@ function copyOrderText() {
     }
     copyToClipboard(formatOrderSummary(), "Order summary copied!");
 }
+
 // --- DARK MODE TOGGLE ---
 (function initDarkMode() {
     if (localStorage.getItem('Wall-e-Wood_theme') === 'dark') {
