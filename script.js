@@ -294,7 +294,7 @@ const DEFAULT_POSTERS = [
         "customPriceA4": 50,
         "discountPercent": 0,
         "priority": false,
-        "soldOut": false,
+        "soldOut": true,
         "image": "images/A4/A4%20(18).webp"
     },
     {
