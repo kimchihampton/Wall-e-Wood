@@ -16,7 +16,6 @@ permissions:
   id-token: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# Setting cancel-in-progress to true stops previous stuck runs immediately to clear the queue.
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -40,4 +39,4 @@ jobs:
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4
