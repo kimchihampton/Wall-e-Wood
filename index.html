@@ -27,7 +27,7 @@
 
     <!-- Top Announcement Bar -->
     <div class="bg-[#111111] text-white text-[11px] font-medium tracking-wide py-2 px-4 border-b border-zinc-800">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span>Order DROP • ARRIVING NOVEMBER 16TH • <strong class="font-semibold">A3  | A4 </strong></span>
@@ -37,19 +37,20 @@
 
     <!-- Header -->
     <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#EAEAEA]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
             <div class="h-16 flex items-center justify-between gap-3">
                 
                 <!-- Left: Brand Wordmark -->
-<div class="flex items-center gap-3 shrink-0">
-    <a 
-        href="#" 
-        onclick="resetAllFilters(); return false;" 
-        class="font-display font-extrabold text-xl sm:text-2xl tracking-tight text-[#111111] flex items-center gap-2 select-none"
-    >
-        <span>Wall-e-Wood</span>
-    </a>
-</div>
+                <div class="flex items-center gap-3 shrink-0">
+                    <a 
+                        href="#" 
+                        onclick="resetAllFilters(); return false;" 
+                        class="font-display font-extrabold text-xl sm:text-2xl tracking-tight text-[#111111] flex items-center gap-2 select-none"
+                    >
+                        <span>Wall-e-Wood</span>
+                    </a>
+                </div>
+
                 <!-- Center: Pill Navigation (All, Anime, Films, Sports) -->
                 <nav class="hidden md:flex items-center bg-zinc-100/90 p-1 rounded-full border border-[#EAEAEA]">
                     <button onclick="setCategory('All')" id="cat-All" class="cat-pill px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer bg-[#111111] text-white shadow-sm">
@@ -138,7 +139,7 @@
     </header>
 
     <!-- Main Section -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-8">
         
         <!-- Sub-Toolbar: Active Section Count, Admin-Only Branch Toggle & Size Filter -->
         <div class="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-[#EAEAEA]">
@@ -338,15 +339,15 @@
             </div>
         </div>
 
-        <!-- 4-Column Poster Card Grid -->
-        <div id="posterGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <!-- 6-Column Poster Card Grid -->
+        <div id="posterGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
             <!-- Populated via JavaScript -->
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-[#EAEAEA] bg-white py-6 px-4 sm:px-6 lg:px-8 mt-14">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
+    <footer class="border-t border-[#EAEAEA] bg-white py-6 px-4 sm:px-6 lg:px-12 mt-14">
+        <div class="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
             <div class="flex items-center gap-2">
                 <span class="font-display font-bold text-[#111111]">Wall-e-Wood</span>
                 <span>—</span>
@@ -440,7 +441,6 @@
     </div>
 
     <!-- Bag Drawer (Email Order & Payment Request) -->
-    <<!-- Bag Drawer (Email Order & Payment Request) -->
     <div id="bagDrawerBackdrop" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden" onclick="toggleBagDrawer(false)">
         <form 
             id="preOrderForm"
@@ -576,7 +576,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Email Address</p>
-                        <a id="contactEmailLink" class="font-mono font-bold text-[#111111] hover:underline block truncate cursor-pointer" title="Click to copy email">                            wallewoodposters@gmail.com
+                        <a id="contactEmailLink" class="font-mono font-bold text-[#111111] hover:underline block truncate cursor-pointer" title="Click to copy email">                    wallewoodposters@gmail.com
                         </a>
                     </div>
                 </div>
