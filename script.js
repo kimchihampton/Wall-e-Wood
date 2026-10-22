@@ -1777,6 +1777,8 @@ async function sendEmailPreOrder(event) {
     errEl.classList.add('hidden');
 
     const orderText = formatOrderSummary();
+    
+    // Redirect exclusively to WhatsApp
     const whatsappNum = STORE_CONFIG.whatsappNumber || "917209939682";
     const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(orderText)}`;
 
