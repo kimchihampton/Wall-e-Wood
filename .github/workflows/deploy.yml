@@ -35,7 +35,9 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # This forces GitHub to keep this run's artifact separate
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
+
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
