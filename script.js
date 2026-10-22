@@ -1777,10 +1777,19 @@ async function sendEmailPreOrder(event) {
     errEl.classList.add('hidden');
 
     const orderText = formatOrderSummary();
-    
-    // Redirect exclusively to WhatsApp
     const whatsappNum = STORE_CONFIG.whatsappNumber || "917209939682";
-    const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(orderText)}`;
+    
+    // Detect if the user is on a mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    let whatsappUrl = "";
+    if (isMobile) {
+        // Open standard WhatsApp app on mobile
+        whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(orderText)}`;
+    } else {
+        // Open WhatsApp Web explicitly on desktop browsers
+        whatsappUrl = `https://web.whatsapp.com/send?phone=${whatsappNum}&text=${encodeURIComponent(orderText)}`;
+    }
 
     window.open(whatsappUrl, '_blank');
 
