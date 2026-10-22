@@ -1,4 +1,4 @@
-/* Clean, distraction-free scrollbars and 2:3 ratio frame */
+/* Clean, distraction-free scrollbars and optimized 3:4 ratio frame for 6-column widescreen */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -18,7 +18,7 @@
 }
 
 .poster-aspect {
-    aspect-ratio: 2 / 3;
+    aspect-ratio: 3 / 4;
 }
 
 .no-scrollbar::-webkit-scrollbar {
