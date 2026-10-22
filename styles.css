@@ -18,7 +18,7 @@
 }
 
 .poster-aspect {
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 2/3;
 }
 
 .no-scrollbar::-webkit-scrollbar {
