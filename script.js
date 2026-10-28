@@ -1770,10 +1770,21 @@ async function sendEmailPreOrder(event) {
     const address = document.getElementById('custAddress').value.trim();
     const errEl = document.getElementById('bagError');
 
+    // 1. Check for empty fields
     if (!name || !phone || !address) {
         errEl.classList.remove('hidden');
         return;
     }
+
+    // 2. Validate exactly 10 digits for the phone number
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+        showToast("Please enter a valid 10-digit phone number");
+        // Optionally keep the error element visible if your UI relies on it
+        errEl.classList.remove('hidden'); 
+        return;
+    }
+
     errEl.classList.add('hidden');
 
     const orderText = formatOrderSummary();
